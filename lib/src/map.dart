@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:android_intent/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +14,6 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import 'model/location_result.dart';
-import 'utils/location_utils.dart';
 
 class MapPicker extends StatefulWidget {
   const MapPicker(
@@ -226,7 +223,7 @@ class MapPickerState extends State<MapPicker> {
                 children: <Widget>[
                   Flexible(
                     flex: 20,
-                    child: FutureLoadingBuilder<Map<String, String?>>(
+                    child: FutureLoadingBuilder<Map<String, String?>?>(
                       future: getAddress(locationProvider.lastIdleLocation),
                       mutable: true,
                       loadingIndicator: Row(
@@ -236,7 +233,7 @@ class MapPickerState extends State<MapPicker> {
                         ],
                       ),
                       builder: (context, data) {
-                        _address = data["address"];
+                        _address = data!["address"];
                         _placeId = data["placeId"];
                         return Text(
                           _address ??
@@ -276,14 +273,26 @@ class MapPickerState extends State<MapPicker> {
           'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}'
           '&key=${widget.apiKey}&language=${widget.language}';
 
-      final response = jsonDecode((await http.get(Uri.parse(endpoint),
-              headers: await (LocationUtils.getAppHeaders() as FutureOr<Map<String, String>?>)))
-          .body);
+      final response = await http.get(Uri.parse(endpoint));
+
+      Map<String, dynamic>? map = json.decode(response.body);
+
+      // final response = jsonDecode((await http.get(Uri.parse(endpoint),
+      //         headers: await (LocationUtils.getAppHeaders()
+      //             as Future<Map<String, String?>>)))
+      //     .body);
+      // print(map!['results'][0]['formatted_address']);
 
       return {
-        "placeId": response['results'][0]['place_id'],
-        "address": response['results'][0]['formatted_address']
+        // "placeId": response['results'][0]['place_id'],
+        "placeId": map!['results'][0]['place_id'],
+        "address": map['results'][0]['formatted_address']
       };
+
+      // return {
+      //   "placeId": response['results'][0]['place_id'],
+      //   "address": response['results'][0]['formatted_address']
+      // };
     } catch (e) {
       print(e);
     }
@@ -408,40 +417,6 @@ class MapPickerState extends State<MapPicker> {
         );
       },
     );
-  }
-
-  // TODO: 9/12/2020 this is no longer needed, remove in the next release
-  Future _checkGps() async {
-    if (!(await Geolocator.isLocationServiceEnabled())) {
-      if (Theme.of(context).platform == TargetPlatform.android) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(S.of(context)?.cant_get_current_location ??
-                  "Can't get current location"),
-              content: Text(S
-                      .of(context)
-                      ?.please_make_sure_you_enable_gps_and_try_again ??
-                  'Please make sure you enable GPS and try again'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Ok'),
-                  onPressed: () {
-                    final AndroidIntent intent = AndroidIntent(
-                        action: 'android.settings.LOCATION_SOURCE_SETTINGS');
-
-                    intent.launch();
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-    }
   }
 }
 
