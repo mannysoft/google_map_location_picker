@@ -27,7 +27,8 @@ class GoogleMapLocationPickerPlugin: MethodCallHandler, FlutterPlugin, ActivityA
         @JvmStatic
         fun registerWith(registrar: Registrar) {
             val channel = MethodChannel(registrar.messenger(), "google_map_location_picker")
-            channel.setMethodCallHandler(GoogleMapLocationPickerPlugin(registrar.activity()))
+//             channel.setMethodCallHandler(GoogleMapLocationPickerPlugin(registrar.activity()))
+                channel.setMethodCallHandler(GoogleMapLocationPickerPlugin())
         }
     }
 
