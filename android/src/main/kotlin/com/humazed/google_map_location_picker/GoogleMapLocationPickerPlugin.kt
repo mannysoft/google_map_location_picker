@@ -1,5 +1,6 @@
 package com.humazed.google_map_location_picker
 
+import android.content.Context
 import android.app.Activity
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
