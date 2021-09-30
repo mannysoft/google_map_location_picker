@@ -17,8 +17,10 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 
-class GoogleMapLocationPickerPlugin(act: Activity) : MethodCallHandler, FlutterPlugin, ActivityAware {
-    var activity: Activity = act
+class GoogleMapLocationPickerPlugin: MethodCallHandler, FlutterPlugin, ActivityAware {
+    private lateinit var channel : MethodChannel
+    private lateinit var context: Context
+    private lateinit var activity: Activity
 
     companion object {
         @JvmStatic
@@ -55,15 +57,17 @@ class GoogleMapLocationPickerPlugin(act: Activity) : MethodCallHandler, FlutterP
     }
     
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-        
+        channel = MethodChannel(binding.getFlutterEngine().getDartExecutor(), "google_map_location_picker")
+        channel.setMethodCallHandler(this);
+        context = binding.applicationContext
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-
+        channel.setMethodCallHandler(null);
     }
     
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-
+        activity = binding.getActivity();
     }
     
     override fun onDetachedFromActivityForConfigChanges() {
