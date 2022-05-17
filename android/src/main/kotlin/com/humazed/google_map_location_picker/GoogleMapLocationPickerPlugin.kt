@@ -39,7 +39,7 @@ class GoogleMapLocationPickerPlugin: MethodCallHandler, FlutterPlugin, ActivityA
         }
         if (call.method == "getSigningCertSha1") {
             try {
-                val info: PackageInfo = activity.packageManager.getPackageInfo(call.arguments<String>(), PackageManager.GET_SIGNATURES)
+                val info: PackageInfo = activity.packageManager.getPackageInfo(call.arguments<String?>(), PackageManager.GET_SIGNATURES)
                 for (signature in info.signatures) {
                     val md: MessageDigest = MessageDigest.getInstance("SHA1")
                     md.update(signature.toByteArray())
