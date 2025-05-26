@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   google_maps_flutter: ^2.12.1
-  android_intent_plus: ^3.1.1
+  android_intent_plus: ^5.3.0
 
 dev_dependencies:
   flutter_test:
