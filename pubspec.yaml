@@ -15,8 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  geolocator: ^7.0.3
-  android_intent_plus: ^2.0.0
+  android_intent_plus: ^5.3.0
   stack_trace: ^1.10.0
 
 dev_dependencies:
